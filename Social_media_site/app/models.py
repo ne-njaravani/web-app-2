@@ -39,10 +39,10 @@ class User(db.Model):
         back_populates='followers'
     )
     post = relationship('Post', back_populates='comments')
-        'User', secondary=followers,
-        primaryjoin=id==followers.c.followed_id,
-        secondaryjoin=id==followers.c.follower_id,
-        back_populates='followed'
+    'User', secondary=followers,
+    primaryjoin=id==followers.c.followed_id,
+    secondaryjoin=id==followers.c.follower_id,
+    back_populates='followed'
        
 
 class Post(db.Model):
@@ -58,4 +58,4 @@ class Comment(db.Model):
     user_id = Column(Integer, ForeignKey('users.id')) 
     post_id = Column(Integer, ForeignKey('posts.id')) 
     user = relationship('User', back_populates='comments') 
-    post = relationship('Post', back_populates='comments'
+    post = relationship('Post', back_populates='comments')

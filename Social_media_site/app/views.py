@@ -2,6 +2,11 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_admin.contrib.sqla import ModelView
 from app import app, db, models
 from .forms import AccountForm, PostForm
+import json
+
+admin.add_view(ModelView(models.User, db.session))
+admin.add_view(ModelView(models.Post, db.session))
+
 
 # Display all the posts grouping them by whether they are complete or incomplete
 @app.route('/')
@@ -44,11 +49,29 @@ def account():
     pass
     form = AccountForm()
     if form.validate_on_submit():
-        current_user.email = form.email.data
+        db.current_user.email = form.email.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
-        form.email.data = current_user.email
+        form.email.data = db.current_user.email
     return render_template('account.html', title='Account', form=form)
 
+# Likes
+@app.route('/likes', methods=['POST'])
+def vote():
+        # Load the JSON data and use the ID of the idea that was clicked to get the object
+    data = json.loads(request.data)
+    idea_id = int(data.get('idea_id'))
+    idea = models.Idea.query.get(idea_id)
+
+        # Increment the correct vote
+    if data.get('reaction_type') == "like":
+        idea.upvotes += 1
+    else:
+        idea.downvotes += 1
+
+        # Save the updated vote count in the DB
+    db.session.commit()
+        # Tell the JS .ajax() call that the data was processed OK
+    return json.dumps({'status':'OK','likes': idea.upvotes, 'dislikes': idea.downvotes })
