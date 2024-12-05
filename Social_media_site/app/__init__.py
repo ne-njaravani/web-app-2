@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
+from flask_login import LoginManager
+from models import User
 
 def get_locale():
     if request.args.get('lang'):
@@ -16,6 +18,13 @@ app.config.from_object('config')
 
 babel = Babel(app, locale_selector=get_locale)
 admin = Admin(app,template_mode='bootstrap4')
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 Bootstrap(app)
 csrf = CSRFProtect(app)

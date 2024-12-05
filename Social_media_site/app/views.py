@@ -1,18 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_admin.contrib.sqla import ModelView
 from app import app, db, models
-from .forms import AssessmentForm
-from flask_login import LoginManager
+from .forms import AccountForm, PostForm
 
-admin.add_view(ModelView(Property, db.session))
-admin.add_view(ModelView(Landlord, db.session))
-
-login_manager = LoginManager()
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
-
-# Display all the assessments grouping them by whether they are complete or incomplete
+# Display all the posts grouping them by whether they are complete or incomplete
 @app.route('/')
 def home():
     
@@ -45,4 +36,19 @@ def login():
 def logout():
     logout_user()
     return redirect(somewhere)
+
+# Manage the user's profile. Change email and password
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    pass
+    form = AccountForm()
+    if form.validate_on_submit():
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.email.data = current_user.email
+    return render_template('account.html', title='Account', form=form)
 
