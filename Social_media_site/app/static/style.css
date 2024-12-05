@@ -1,0 +1,46 @@
+/*Navbar styling*/
+/* hover effect*/
+/* Add styles for active nav item */
+.nav-item.active .nav-link {
+    background-color: grey;
+    color: black;
+}
+
+/* Navbar hover effect */
+.nav-link {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: lightgrey;
+    color: black;
+}
+
+/* Ensure active page also shows hover effect */
+.nav-item.active .nav-link:hover {
+    background-color: lightgrey;
+    color: black;
+}
+
+
+/* Add hover effect to buttons */
+.btn {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+
+/* Change Width for Input Fields */
+
+.title-input {
+    max-width: 300px;
+}
+
+.module-code-input {
+    max-width: 125px;
+}
+
+.deadline-input {
+    max-width: 175px;
+}
+
+

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block title %}Edit Assessment{% endblock %}
+
+{% block content %}
+    <h1 class="text-nowrap">Edit Assessment</h1>
+    <form action="" method="post" name="Edit">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title(class_='form-control title-input', size=32) }}
+            {% for error in form.title.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.module_code.label }}<br>
+            {{ form.module_code(class_='form-control module-code-input', size=32, placeholder="ABCD1234") }}
+            {% for error in form.module_code.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description(class_='form-control', rows=4, cols=50) }}
+            {% for error in form.description.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.deadline.label }}<br>
+            {{ form.deadline(class_='form-control deadline-input', placeholder="YYYY-MM-DD") }}
+            {% for error in form.deadline.errors %}
+                <div class="alert alert-danger" role="alert">
+                    [{{ error }}]
+                </div>
+            {% endfor %}
+    
+        </p>
+        <p><input type="submit" class="btn btn-primary" value="Save Changes"></p>
+    </form>
+{% endblock %}

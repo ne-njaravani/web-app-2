@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Assessments</h1>
+<br>
+<!-- In Progress Assessments -->
+<h3><b>In Progress</b></h3>
+<br>
+{% if in_progress_assessments %}
+
+    
+        {% for assessment in in_progress_assessments %}
+            <h5> <b>Module:</b> {{ assessment.module_code }}</h5>
+            <h6> <b>Assessment:</b> {{ assessment.title }}</h6>
+            <p>  <b>Due:</b> {{ assessment.deadline }}</p>
+            <p>{{ assessment.description }}</p>
+
+            <div class="btn-group" role="group" aria-label="Button group with spacing">
+                <a href="{{ url_for('edit', id=assessment.id) }}" class="btn btn-primary btn-sm">Edit</a>&nbsp;
+                <a href="{{ url_for('toggle_complete', id=assessment.id) }}" class="btn btn-warning btn-sm text-nowrap">Mark as COMPLETED</a>&nbsp;
+                <a href="{{ url_for('delete_assessment', id=assessment.id) }}" class="btn btn-danger btn-sm ">Delete</a>
+            </div>
+            <br>
+            <br>
+            <br>
+        {% endfor %}
+
+{% else %}
+<p>No assessments in progress</p>
+{% endif %}
+<br>
+<br>
+<!-- Completed Assessments -->
+<h3><b>Completed</b></h3>
+<br>
+{% if completed_assessments %}
+        {% for assessment in completed_assessments %}
+            <h5> <b>Module:</b> {{ assessment.module_code }}</h5>
+            <h6> <b>Assessment:</b> {{ assessment.title }}</h6>
+            <p>  <b>Due:</b> {{ assessment.deadline }}</p>
+            <p>{{ assessment.description }}</p>
+
+            <div class="btn-group" role="group" aria-label="Button group with spacing">
+                <a href="{{ url_for('edit', id=assessment.id) }}" class="btn btn-primary btn-sm">Edit</a>&nbsp;
+                <a href="{{ url_for('toggle_complete', id=assessment.id) }}" class="btn btn-warning btn-sm text-nowrap">Mark as INCOMPLETE</a>&nbsp;
+                <a href="{{ url_for('delete_assessment', id=assessment.id) }}" class="btn btn-danger btn-sm ">Delete</a>
+            </div>
+            <br>
+            <br>
+            <br>
+        {% endfor %}
+{% else %}
+<p>No assessments completed</p>
+{% endif %}
+<br>
+<br>
+<a href="{{ url_for('create') }}" class="btn btn-secondary mt-4">Create Assessment</a>
+<br>
+{% endblock %}
