@@ -28,15 +28,14 @@
             <li class="nav-item {% if request.path == '/' %}active{% endif %}">
                 <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item {% if request.path == '/completed' %}active{% endif %}">
-                <a class="nav-link" href="/completed">Completed Assessments</a>
+            <li class="nav-item {% if request.path == '/account' %}active{% endif %}">
+                <a class="nav-link" href="/account">Account</a>
             </li>
-            <li class="nav-item {% if request.path == '/uncompleted' %}active{% endif %}">
-                <a class="nav-link" href="/uncompleted">Assessments in Progress</a>
+            <li class="nav-item {% if request.path == '/loginOrRegister' %}active{% endif %}">
+                <a class="nav-link" href="/loginOrRegister">Login/Register</a>
             </li>
-            <li class="nav-item {% if request.path == '/create' %}active{% endif %}">
-                <a class="nav-link" href="/create">Create Assessment</a>
-            </li>
+            <li class="nav-item {% if request.path == '/logout' %}active{% endif %}">
+                <a class="nav-link" href="/logout">Logout</a>
         </ul>
     </div>
   </nav>
