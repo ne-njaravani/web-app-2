@@ -2,60 +2,64 @@ from app import db
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-# Many-to-many relationship table for followers
+# Many-to-many relationship tables
 followers = Table(
     'followers',
-    Base.metadata,
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+    db.Model.metadata,
+    Column('follower_id', Integer, ForeignKey('user.id')),
+    Column('following_id', Integer, ForeignKey('user.id'))
 )
 
-# Many-to-many relationship table for posts and users
 posts_users = Table(
     'posts_users',
-    Base.metadata,
-    db.Column('post_id', db.Integer, db.ForeignKey('post.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+    db.Model.metadata,
+    Column('post_id', Integer, ForeignKey('post.id')),
+    Column('user_id', Integer, ForeignKey('user.id'))
 )
 
-# Many-to-many relationship table for likes
 likes = Table(
     'likes',
-    Base.metadata,
-    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
+    db.Model.metadata,
+    Column('post_id', Integer, ForeignKey('post.id'))
 )
 
-
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    posts = db.relationship('Post', secondary=posts_users, back_populates='users')
-    liked_posts = db.relationship('Post', secondary=likes, back_populates='liked_by')
-    comments = db.relationship('Comment', back_populates='user')
-    followed = db.relationship(
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50), unique=True, nullable=False)
+    password = Column(String(128))
+    posts = relationship('Post', secondary=posts_users, back_populates='users')
+    liked_posts = relationship('Post', secondary=likes, back_populates='liked_by')
+    comments = relationship('Comment', back_populates='user')
+    followers = relationship(
         'User', secondary=followers,
         primaryjoin=id==followers.c.follower_id,
-        secondaryjoin=id==followers.c.followed_id,
+        secondaryjoin=id==followers.c.following_id,
+        back_populates='following'
+    )
+    following = relationship(
+        'User', secondary=followers,
+        primaryjoin=id==followers.c.following_id,
+        secondaryjoin=id==followers.c.follower_id,
         back_populates='followers'
     )
-    post = relationship('Post', back_populates='comments')
-    'User', secondary=followers,
-    primaryjoin=id==followers.c.followed_id,
-    secondaryjoin=id==followers.c.follower_id,
-    back_populates='followed'
-       
+
+    def set_password(self, password): 
+        self.password = password 
+    
+    def check_password(self, password): 
+        return self.password == password
 
 class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(500), nullable=False)
-    users = db.relationship('User', secondary=posts_users, back_populates='posts')
-    liked_by = db.relationship('User', secondary=likes, back_populates='liked_posts')
-    comments = db.relationship('Comment', back_populates='post')
+    id = Column(Integer, primary_key=True)
+    content = Column(String(500), nullable=False)
+    users = relationship('User', secondary=posts_users, back_populates='posts')
+    liked_by = relationship('User', secondary=likes, back_populates='liked_posts')
+    comments = relationship('Comment', back_populates='post')
 
 class Comment(db.Model): 
     id = Column(Integer, primary_key=True) 
     content = Column(String(500), nullable=False) 
-    user_id = Column(Integer, ForeignKey('users.id')) 
-    post_id = Column(Integer, ForeignKey('posts.id')) 
+    user_id = Column(Integer, ForeignKey('user.id')) 
+    post_id = Column(Integer, ForeignKey('post.id')) 
     user = relationship('User', back_populates='comments') 
     post = relationship('Post', back_populates='comments')

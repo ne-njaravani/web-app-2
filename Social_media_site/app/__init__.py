@@ -33,3 +33,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from app import views, models
+
+# Register models with Flask-Admin 
+from flask_admin.contrib.sqla import ModelView
+
+# Assuming models Property and Landlord 
+admin.add_view(ModelView(Property, db.session)) 
+admin.add_view(ModelView(Landlord, db.session))

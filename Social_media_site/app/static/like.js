@@ -31,7 +31,7 @@ $(document).ready(function() {
 
                 // Update the html rendered to reflect new count
                 // Check which count to update
-                if(vote_type == "up") {
+                if(vote_type == "like") {
                     clicked_obj.children()[1].innerHTML = " " + response.like;
                 } else {
                     clicked_obj.children()[1].innerHTML = " " + response.dislike;

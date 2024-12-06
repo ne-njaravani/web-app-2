@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user, login_required
 from app import app, db, models
 from .forms import AccountForm, PostForm
 import json
@@ -10,7 +11,9 @@ admin.add_view(ModelView(models.Post, db.session))
 
 # Display all the posts grouping them by whether they are complete or incomplete
 @app.route('/')
-def home():
+def home(): 
+    posts = models.Post.query.all() 
+    return render_template('home.html', posts=posts)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -27,9 +30,6 @@ def login():
         flask.flash('Logged in successfully.')
 
         next = flask.request.args.get('next')
-        # url_has_allowed_host_and_scheme should check if the url is safe
-        # for redirects, meaning it matches the request host.
-        # See Django's url_has_allowed_host_and_scheme for an example.
         if not url_has_allowed_host_and_scheme(next, request.host):
             return flask.abort(400)
 
@@ -49,13 +49,13 @@ def account():
     pass
     form = AccountForm()
     if form.validate_on_submit():
-        db.current_user.email = form.email.data
+        current_user.username = form.username.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
-        form.email.data = db.current_user.email
-    return render_template('account.html', title='Account', form=form)
+        form.username.data = current_user.username
+    return render_template('account.html', form=form)
 
 # Likes
 @app.route('/likes', methods=['POST'])
