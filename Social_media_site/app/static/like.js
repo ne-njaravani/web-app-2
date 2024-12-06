@@ -15,9 +15,9 @@ $(document).ready(function() {
         var button = $(this);
 
         // Which idea was clicked? Fetch the idea ID
-        var idea_id = $(this).attr('id');
-    // Is it an upvote or downvote?
-        var reaction_type = $(this).children()[0].id;
+        var reaction_id = button.attr('id');
+        // Is it an upvote or downvote?
+        var reaction_type = button.children()[0].id;
 
         $.ajax({
             url: '/like',

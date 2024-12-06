@@ -16,8 +16,6 @@ def get_locale():
 app = Flask(__name__)
 app.config.from_object('config')
 
-babel = Babel(app, locale_selector=get_locale)
-admin = Admin(app,template_mode='bootstrap4')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -31,6 +29,9 @@ csrf = CSRFProtect(app)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+babel = Babel(app, locale_selector=get_locale)
+admin = Admin(app,template_mode='bootstrap4')
 
 from app import views, models
 

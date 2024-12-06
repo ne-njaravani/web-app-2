@@ -1,12 +1,13 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_admin.contrib.sqla import ModelView
-from flask_login import current_user, login_required
-from app import app, db, models
-from .forms import AccountForm, PostForm
+from flask_login import current_user, login_required, login_user, logout_user
+from app import app, db, models, admin
+from .forms import AccountForm, PostForm, LoginForm
 import json
 
-admin.add_view(ModelView(models.User, db.session))
-admin.add_view(ModelView(models.Post, db.session))
+admin.add_view(ModelView(db.User, db.session)) 
+admin.add_view(ModelView(db.Post, db.session)) 
+admin.add_view(ModelView(db.Comment, db.session))
 
 
 # Display all the posts grouping them by whether they are complete or incomplete
