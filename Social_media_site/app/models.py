@@ -1,6 +1,7 @@
-from app import db
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
+from flask_login import UserMixin
+from app import db
 
 # Many-to-many relationship tables
 followers = Table(
@@ -23,7 +24,7 @@ likes = Table(
     Column('post_id', Integer, ForeignKey('post.id'))
 )
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, nullable=False)
     password = Column(String(128))
@@ -43,10 +44,10 @@ class User(db.Model):
         back_populates='followers'
     )
 
-    def set_password(self, password): 
-        self.password = password 
-    
-    def check_password(self, password): 
+    def set_password(self, password):
+        self.password = password
+
+    def check_password(self, password):
         return self.password == password
 
 class Post(db.Model):

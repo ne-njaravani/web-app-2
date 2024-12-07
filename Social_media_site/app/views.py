@@ -1,8 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, make_response, session
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db, models, admin
-from .forms import AccountForm, PostForm, LoginForm, CommentForm
+from .forms import AccountForm, PostForm, LoginForm, CommentForm, SignupForm
 from .models import User, Post, Comment
 import json
 
@@ -17,39 +17,72 @@ def home():
     posts = models.Post.query.all() 
     form = CommentForm()
     return render_template('home.html', posts=posts, form=form)
-    
+
+
+@app.route('/set_cookie')
+def set_cookie():
+    response = make_response(render_template('index.html'))
+    response.set_cookie('username', 'john_doe')
+    return response
+
+@app.route('/get_cookie')
+def get_cookie():
+    username = request.cookies.get('username')
+    return f'Welcome {username}'
+
+# Set session
+@app.route('/set_session')
+def set_session():
+    session['username'] = 'john_doe'
+    return 'Session variable set'
+
+@app.route('/get_session')
+def get_session():
+    username = session.get('username')
+    return f'Welcome {username}'
+
+@app.route('/delete_session')
+def delete_session():
+    session.pop('username', None)
+    return 'Session variable deleted'
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignupForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('signup.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Here we use a class of some kind to represent and validate our
-    # client-side form data. For example, WTForms is a library that will
-    # handle this for us, and we use a custom LoginForm to validate.
     form = LoginForm()
     if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        login_user(user)
-
-        flash('Logged in successfully.')
-
-        next = request.args.get('next')
-        if not url_has_allowed_host_and_scheme(next, request.host):
-            return flask.abort(400)
-
-        return flask.redirect(next or flask.url_for('index'))
-    return flask.render_template('login.html', form=form)
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user)
+            flash('Logged in successfully.', 'success')
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', form=form)
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(somewhere)
+    return redirect("/home")
 
 # Manage the user's profile. Change email and password
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    pass
     form = AccountForm()
     if form.validate_on_submit():
         current_user.username = form.username.data
@@ -62,6 +95,7 @@ def account():
 
 # Likes
 @app.route('/likes', methods=['POST'])
+@login_required
 def vote():
         # Load the JSON data and use the ID of the idea that was clicked to get the object
     data = json.loads(request.data)
@@ -82,7 +116,7 @@ def vote():
 
 @app.route('/add_comment/<int:post_id>', methods=['POST']) 
 @login_required 
-def add_comment(post_id): 
+def add_comment(post_id):
     form = CommentForm() 
     if form.validate_on_submit(): 
         comment = db.Comment(content=form.content.data, user_id=current_user.id, post_id=post_id) 

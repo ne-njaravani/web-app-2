@@ -15,7 +15,7 @@ def get_locale():
 
 app = Flask(__name__)
 app.config.from_object('config')
-
+app.secret_key = 'your_secret_key'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -23,6 +23,9 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
+
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access.'
 
 Bootstrap(app)
 csrf = CSRFProtect(app)
