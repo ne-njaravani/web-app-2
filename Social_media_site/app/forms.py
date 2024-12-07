@@ -11,11 +11,11 @@ class AccountForm(FlaskForm):
 
 # Post form
 class PostForm(FlaskForm):
-    content = TextAreaField('Content', validators=[DataRequired()])
+    post = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 class CommentForm(FlaskForm): 
-    content = TextAreaField('Content', validators=[DataRequired()]) 
+    comment = TextAreaField('Content', validators=[DataRequired()]) 
     submit = SubmitField('Submit')
 
 class SignupForm(FlaskForm): 

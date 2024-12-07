@@ -15,14 +15,14 @@ $(document).ready(function() {
         var button = $(this);
 
         // Which idea was clicked? Fetch the idea ID
-        var idea_id = button.attr('id');
+        var post_id = button.attr('id');
         // Is it an upvote or downvote?
         var reaction_type = button.children()[0].id;
 
         $.ajax({
-            url: '/like',
+            url: '/reaction',
             type: 'POST',
-            data: JSON.stringify({ idea_id: idea_id, reaction_type: reaction_type}),
+            data: JSON.stringify({ post_id: post_id, reaction_type: reaction_type}),
       // We are using JSON, not XML
             contentType: "application/json; charset=utf-8",
             dataType: "json",

@@ -14,6 +14,15 @@ admin.add_view(ModelView(Comment, db.session))
 # Display all the posts grouping them by whether they are complete or incomplete
 @app.route('/')
 def home(): 
+
+    form = PostForm()
+    if form.validate_on_submit():
+        new_post = models.Post(content=form.post.data)
+        db.session.add(new_post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')    
+
+
     posts = models.Post.query.all() 
     form = CommentForm()
     return render_template('home.html', posts=posts, form=form)
@@ -93,26 +102,6 @@ def account():
         form.username.data = current_user.username
     return render_template('account.html', form=form)
 
-# Likes
-@app.route('/likes', methods=['POST'])
-@login_required
-def vote():
-        # Load the JSON data and use the ID of the idea that was clicked to get the object
-    data = json.loads(request.data)
-    idea_id = int(data.get('idea_id'))
-    idea = models.Idea.query.get(idea_id)
-
-        # Increment the correct vote
-    if data.get('reaction_type') == "like":
-        idea.upvotes += 1
-    else:
-        idea.downvotes += 1
-
-        # Save the updated vote count in the DB
-    db.session.commit()
-        # Tell the JS .ajax() call that the data was processed OK
-    return json.dumps({'status':'OK','likes': idea.upvotes, 'dislikes': idea.downvotes })
-
 
 @app.route('/add_comment/<int:post_id>', methods=['POST']) 
 @login_required 
@@ -124,3 +113,22 @@ def add_comment(post_id):
         db.session.commit() 
         flash('Your comment has been added!', 'success') 
         return redirect(url_for('home'))
+    
+    # Likes
+@app.route('/like', methods=['POST'])
+@login_required
+def vote():
+    data = json.loads(request.data)
+    post_id = int(data.get('post_id'))
+    post = models.Idea.query.get(post_id)
+
+        # Increment the correct vote
+    if data.get('reaction_type') == "like":
+        post.upvotes += 1
+    else:
+        post.downvotes += 1
+
+        # Save the updated vote count in the DB
+    db.session.commit()
+        # Tell the JS .ajax() call that the data was processed OK
+    return json.dumps({'status':'OK','likes': post.upvotes, 'dislikes': post.downvotes })
