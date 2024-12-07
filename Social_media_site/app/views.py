@@ -2,19 +2,21 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db, models, admin
-from .forms import AccountForm, PostForm, LoginForm
+from .forms import AccountForm, PostForm, LoginForm, CommentForm
+from .models import User, Post, Comment
 import json
 
-admin.add_view(ModelView(db.User, db.session)) 
-admin.add_view(ModelView(db.Post, db.session)) 
-admin.add_view(ModelView(db.Comment, db.session))
+admin.add_view(ModelView(User, db.session)) 
+admin.add_view(ModelView(Post, db.session)) 
+admin.add_view(ModelView(Comment, db.session))
 
 
 # Display all the posts grouping them by whether they are complete or incomplete
 @app.route('/')
 def home(): 
     posts = models.Post.query.all() 
-    return render_template('home.html', posts=posts)
+    form = CommentForm()
+    return render_template('home.html', posts=posts, form=form)
     
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -28,9 +30,9 @@ def login():
         # user should be an instance of your `User` class
         login_user(user)
 
-        flask.flash('Logged in successfully.')
+        flash('Logged in successfully.')
 
-        next = flask.request.args.get('next')
+        next = request.args.get('next')
         if not url_has_allowed_host_and_scheme(next, request.host):
             return flask.abort(400)
 
@@ -76,3 +78,15 @@ def vote():
     db.session.commit()
         # Tell the JS .ajax() call that the data was processed OK
     return json.dumps({'status':'OK','likes': idea.upvotes, 'dislikes': idea.downvotes })
+
+
+@app.route('/add_comment/<int:post_id>', methods=['POST']) 
+@login_required 
+def add_comment(post_id): 
+    form = CommentForm() 
+    if form.validate_on_submit(): 
+        comment = db.Comment(content=form.content.data, user_id=current_user.id, post_id=post_id) 
+        db.session.add(comment) 
+        db.session.commit() 
+        flash('Your comment has been added!', 'success') 
+        return redirect(url_for('home'))

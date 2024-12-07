@@ -6,7 +6,7 @@ from flask_admin import Admin
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
-from models import User
+from .models import User, Post, Comment
 
 def get_locale():
     if request.args.get('lang'):
@@ -38,6 +38,6 @@ from app import views, models
 # Register models with Flask-Admin 
 from flask_admin.contrib.sqla import ModelView
 
-# Assuming models Property and Landlord 
-admin.add_view(ModelView(Property, db.session)) 
-admin.add_view(ModelView(Landlord, db.session))
+admin.add_view(ModelView(User, db.session)) 
+admin.add_view(ModelView(Post, db.session)) 
+admin.add_view(ModelView(Comment, db.session))

@@ -15,7 +15,7 @@ $(document).ready(function() {
         var button = $(this);
 
         // Which idea was clicked? Fetch the idea ID
-        var reaction_id = button.attr('id');
+        var idea_id = button.attr('id');
         // Is it an upvote or downvote?
         var reaction_type = button.children()[0].id;
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source flask/bin/activate
-cd ASocial_media_site/
+cd Social_media_site/
 
 # Try to run the Flask application on the default port
 if ! flask run; then

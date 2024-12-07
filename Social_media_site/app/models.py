@@ -53,7 +53,7 @@ class Post(db.Model):
     id = Column(Integer, primary_key=True)
     content = Column(String(500), nullable=False)
     users = relationship('User', secondary=posts_users, back_populates='posts')
-    liked_by = relationship('User', secondary=likes, back_populates='liked_posts')
+    likes = relationship('User', secondary=likes, back_populates='liked_posts')
     comments = relationship('Comment', back_populates='post')
 
 class Comment(db.Model): 
