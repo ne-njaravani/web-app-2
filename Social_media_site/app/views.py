@@ -2,14 +2,13 @@ from flask import Flask, render_template, redirect, url_for, flash, request, mak
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db, models, admin
-from .forms import AccountForm, PostForm, LoginForm, CommentForm, SignupForm
-from .models import User, Post, Comment
+from .forms import AccountForm, PostForm, LoginForm, SignupForm
+from .models import User, Post, Like
 import json
 
 admin.add_view(ModelView(User, db.session)) 
-admin.add_view(ModelView(Post, db.session)) 
-admin.add_view(ModelView(Comment, db.session))
-
+admin.add_view(ModelView(Post, db.session))
+admin.add_view(ModelView(Like, db.session))
 
 # Display all the posts grouping them by whether they are complete or incomplete
 @app.route('/')
@@ -23,8 +22,7 @@ def home():
         flash('Your post has been created!', 'success')    
 
 
-    posts = models.Post.query.all() 
-    form = CommentForm()
+    posts = models.Post.query.all()
     return render_template('home.html', posts=posts, form=form)
 
 
@@ -101,18 +99,6 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
     return render_template('account.html', form=form)
-
-
-@app.route('/add_comment/<int:post_id>', methods=['POST']) 
-@login_required 
-def add_comment(post_id):
-    form = CommentForm() 
-    if form.validate_on_submit(): 
-        comment = db.Comment(content=form.content.data, user_id=current_user.id, post_id=post_id) 
-        db.session.add(comment) 
-        db.session.commit() 
-        flash('Your comment has been added!', 'success') 
-        return redirect(url_for('home'))
     
     # Likes
 @app.route('/like', methods=['POST'])
@@ -120,7 +106,7 @@ def add_comment(post_id):
 def vote():
     data = json.loads(request.data)
     post_id = int(data.get('post_id'))
-    post = models.Idea.query.get(post_id)
+    post = models.Post.query.get(post_id)
 
         # Increment the correct vote
     if data.get('reaction_type') == "like":

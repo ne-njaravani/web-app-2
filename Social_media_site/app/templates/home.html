@@ -2,6 +2,45 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-
-
+<body class="bg-light">
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>Welcome To the Social Media App</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <form action="" method="post" role="form" name="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        {{ form.csrf }}
+                        <div class="form-group">
+                            {{ form.post(class="form-control", id="post", placeholder="Share your thoughts...") }}
+                        </div>
+                        <button type="submit" class="btn btn-success">Submit your idea</button>
+                    </form>
+                </div>
+            </div>
+            <br /><br />
+            <h4>You could also vote for other people's posts. Or your own.</h4>
+            <meta name="csrf-token" content="{{ csrf_token() }}">
+            {% for post in posts %}
+            <div class="alert alert-info posts" role="alert">
+                {{ post.content }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a class="vote" id="{{ post.id }}">
+                    <i class="far fa-thumbs-up" id="up"></i><span id="sup"> {{ post.likes|length }}</span></a>
+                <a class="vote" id="{{ post.id }}">
+                    <i class="far fa-thumbs-down" id="down"></i><span id="sdown"> {{ post.dislikes|length }}</span></a>
+                <br />
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
 {% endblock %}

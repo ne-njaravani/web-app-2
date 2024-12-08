@@ -6,7 +6,6 @@ from flask_admin import Admin
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager
-from .models import User, Post, Comment
 
 def get_locale():
     if request.args.get('lang'):
@@ -17,30 +16,30 @@ app = Flask(__name__)
 app.config.from_object('config')
 app.secret_key = 'your_secret_key'
 
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access.'
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
 
-login_manager.login_view = 'login'
-login_manager.login_message = 'Please log in to access.'
-
 Bootstrap(app)
 csrf = CSRFProtect(app)
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 babel = Babel(app, locale_selector=get_locale)
 admin = Admin(app,template_mode='bootstrap4')
 
-from app import views, models
-
 # Register models with Flask-Admin 
 from flask_admin.contrib.sqla import ModelView
+from .models import User, Post
 
-admin.add_view(ModelView(User, db.session)) 
-admin.add_view(ModelView(Post, db.session)) 
-admin.add_view(ModelView(Comment, db.session))
+admin.add_view(ModelView(User, db.session, name='Admin Users', endpoint='admin_users'))
+admin.add_view(ModelView(Post, db.session, name='Admin Posts', endpoint='admin_posts'))
+
+from app import views, models
