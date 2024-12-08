@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, make_response, session
+from flask import Flask, render_template, redirect, url_for, flash, request, make_response, session, jsonify
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db, models, admin
