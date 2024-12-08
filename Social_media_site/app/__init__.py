@@ -27,19 +27,19 @@ login_manager.login_message = 'Please log in to access.'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(int(user_id))
 
 Bootstrap(app)
 csrf = CSRFProtect(app)
 
 babel = Babel(app, locale_selector=get_locale)
-admin = Admin(app,template_mode='bootstrap4')
+admin = Admin(app, template_mode='bootstrap4')
 
-# Register models with Flask-Admin 
 from flask_admin.contrib.sqla import ModelView
-from .models import User, Post
+from .models import User, Post, Like
 
 admin.add_view(ModelView(User, db.session, name='Admin Users', endpoint='admin_users'))
 admin.add_view(ModelView(Post, db.session, name='Admin Posts', endpoint='admin_posts'))
+admin.add_view(ModelView(Like, db.session, name='Admin Likes', endpoint='admin_likes'))
 
 from app import views, models

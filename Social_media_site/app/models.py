@@ -4,8 +4,9 @@ from flask_login import UserMixin
 from app import db
 
 # Many-to-many relationship for posts and users
-posts_users = Table(
-    'posts_users', db.Model.metadata,
+posts_users = db.Table(
+    'posts_users',
+    db.Model.metadata,
     Column('post_id', db.Integer, ForeignKey('post.id')),
     Column('user_id', db.Integer, ForeignKey('user.id'))
 )

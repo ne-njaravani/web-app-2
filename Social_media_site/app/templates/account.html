@@ -3,22 +3,35 @@
 {% block title %}Account{% endblock %}
 {% block content %}
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2>Update Account</h2>
-            <form method="POST" action="{{ url_for('account') }}">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    {{ form.username(class="form-control", id="username") }}
-                </div>
-                <div class="form-group">
-                    <label for="password">New Password</label>
-                    {{ form.password(class="form-control", id="password") }}
-                </div>
-                <button type="submit" class="btn btn-primary">Update</button>
-            </form>
-        </div>
+    <div class="py-5 text-center">
+        <h2>Your Posts</h2>
     </div>
+    {% if current_user.is_authenticated %}
+    <a class="btn btn-primary mb-3" href="{{ url_for('account_edit') }}">Edit Account Info</a>
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-12">
+            <div class="alert alert-info posts" role="alert">
+                <h5>{{ post.username }}</h5>
+                <p>{{ post.content }}</p>
+                <p><small>{{ post.timestamp }}</small></p>
+                <div class="btn-group" role="group" aria-label="Button group with spacing">
+                    <a class="btn btn-primary btn-sm" href="{{ url_for('edit_post', id=post.id) }}">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="{{ url_for('delete_post', id=post.id) }}">Delete</a>
+                </div>
+                <br><br>
+                <a class="vote" id="{{ post.id }}">
+                    <i class="far fa-thumbs-up" id="up"></i><span id="sup"> {{ post.likes|length }}</span>
+                </a>
+                <a class="vote" id="{{ post.id }}">
+                    <i class="far fa-thumbs-down" id="down"></i><span id="sdown"> {{ post.dislikes|length }}</span>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Please <a href="{{ url_for('login') }}">log in</a> to view your posts.</p>
+    {% endif %}
 </div>
 {% endblock %}

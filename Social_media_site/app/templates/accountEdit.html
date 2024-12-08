@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-{% block title %}Sign Up{% endblock %}
+{% block title %}Edit Account{% endblock %}
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <h2>Sign Up</h2>
-            <form method="POST" action="{{ url_for('signup') }}">
+            <h2>Edit Account Info</h2>
+            <form method="POST" action="{{ url_for('account_edit') }}">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">New Username</label>
                     {{ form.username(class="form-control", id="username") }}
                 </div>
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    {{ form.email(class="form-control", id="email") }}
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">New Password</label>
                     {{ form.password(class="form-control", id="password") }}
                 </div>
                 <div class="form-group">
-                    <label for="confirm_password">Confirm Password</label>
+                    <label for="confirm_password">Confirm New Password</label>
                     {{ form.confirm_password(class="form-control", id="confirm_password") }}
                 </div>
-                <button type="submit" class="btn btn-primary">Sign Up</button>
+                <button type="submit" class="btn btn-primary">Update</button>
             </form>
-            <p class="mt-3">Already have an account? <a href="{{ url_for('login') }}">Log in here</a></p>
         </div>
     </div>
 </div>
