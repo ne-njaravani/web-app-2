@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    // Set the CSRF token so that we are not rejected by server
+    // Set the token so that we are not rejected by server
     var csrf_token = $('meta[name=csrf-token]').attr('content');
     // Configure ajaxSetup so that the CSRF token is added to the header of every request
     $.ajaxSetup({
@@ -10,31 +10,36 @@ $(document).ready(function() {
         }
     });
 
-    $(".reaction").on("click", function() {
-        var button = $(this);
-        var post_id = button.data('post-id');
-        var reaction_type = button.data('reaction-type');
-
-        $.ajax({
-            url: '/reaction',
-            type: 'POST',
-            data: JSON.stringify({ post_id: post_id, reaction_type: reaction_type }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(response) {
-                if (response.status === 'OK') {
-                    button.closest('.post').find("#sup").text(" " + response.likes);
-                    button.closest('.post').find("#sdown").text(" " + response.dislikes);
-                    button.closest('.post').find(".like-users").html(response.like_users.join(', '));
-                }
-            },
-            error: function(error) {
-                if (error.status === 401) {
-                    window.location.href = '/login';
-                } else {
-                    console.log(error);
-                }
-            }
-        });
+    $('.reaction').on('click', function() {
+        var post_id = $(this).data('post-id');
+        var reaction_type = $(this).data('reaction-type');
+        console.log('Post ID:', post_id);
+        console.log('Reaction Type:', reaction_type);
+        handleReaction(post_id, reaction_type, $(this));
     });
 });
+
+function handleReaction(post_id, reaction_type, element) {
+    $.ajax({
+        url: '/reaction',
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify({
+            post_id: post_id,
+            reaction_type: reaction_type
+        }),
+        success: function(response) {
+            console.log('Response:', response);
+            if (response.status === 'OK') {
+                var postElement = element.closest('.post');
+                postElement.find('.like-count').text(response.likes);
+                postElement.find('.dislike-count').text(response.dislikes);
+                postElement.find('.like-users').text(response.like_users.join(', '));
+            }
+        },
+        error: function(error) {
+            console.log('AJAX Error:', error);
+        }
+    });
+}

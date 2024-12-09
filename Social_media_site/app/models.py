@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from app import db
+from datetime import datetime
 
 # Many-to-many relationship for posts and users
 posts_users = db.Table(
@@ -34,6 +35,7 @@ class Post(db.Model):
     id = Column(Integer, primary_key=True)
     content = Column(String(500), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    timestamp = Column(db.DateTime, default=datetime.utcnow, nullable=False)  # Add this line
     user = relationship('User', back_populates='posts')
     reactions = relationship('Reaction', back_populates='post')
 

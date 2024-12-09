@@ -187,4 +187,9 @@ def reaction():
     dislikes_count = Reaction.query.filter_by(post_id=post_id, reaction_type='dislike').count()
     like_users = [reaction.user.username for reaction in Reaction.query.filter_by(post_id=post_id, reaction_type='like').all()]
 
-    return jsonify({'status': 'OK', 'likes': likes_count, 'dislikes': dislikes_count, 'like_users': like_users})
+    return jsonify({
+        'status': 'OK',
+        'likes': likes_count,
+        'dislikes': dislikes_count,
+        'like_users': like_users
+    })

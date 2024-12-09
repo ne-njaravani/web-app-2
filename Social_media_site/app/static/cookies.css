@@ -1,0 +1,23 @@
+/* Cookie Consent Styles */
+.cookie-consent {
+    background: #eaf7f7;
+    color: #5c7291;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.cookie-consent-button {
+    background: #56cbdb;
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 10px;
+}
+
+.cookie-consent-link {
+    color: #56cbdb;
+    margin-left: 10px;
+}

@@ -4,11 +4,13 @@
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- Font Awesome -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
   <!-- Custom CSS -->
@@ -18,18 +20,24 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha384-SZXxX4whJ79/Gfr7oCK+w3IyKp3Jaz66eTwRdEIKgrG96AG4nLG/ZTnx4JkBGT1T" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='sticky_footer.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/cookies.css') }}">
 
   <title>{% block title %}Yap App{% endblock %}</title>
 </head>
 
 <body>
+  <!-- Navbar with different properties when a user is logged and when they are not -->
   <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-    <a class="navbar-brand text-white" href="{{ url_for('home') }}">My App</a>
+    <a class="navbar-brand text-white" href="{{ url_for('home') }}">YAP APP!</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link text-white" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
+          </li>
+          
             {% if current_user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link text-white" href="{{ url_for('create_post') }}">Create</a>
@@ -75,7 +83,7 @@
       </div>
     </div>
   </div>
-
+  <br>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
