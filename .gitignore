@@ -1,0 +1,3 @@
+# Ignore database files
+app.db
+/workspaces/web-app-2/Social_media_site/app.db
