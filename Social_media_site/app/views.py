@@ -13,6 +13,13 @@ admin.add_view(ModelView(Reaction, db.session))
 @app.route('/')
 def home():
     form = PostForm()
+    if form.validate_on_submit():
+        new_post = models.Post(content=form.post.data, user_id=current_user.id)
+        db.session.add(new_post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+
     posts = models.Post.query.all()
     return render_template('home.html', posts=posts, form=form)
 
@@ -60,16 +67,17 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            flash('Logged in successfully.', 'success')
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+        if user:
+            if user.check_password(form.password.data):
+                login_user(user)
+                flash('Logged in successfully.', 'success')
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('home'))
+            else:
+                flash('Login Unsuccessful. Please check username and password', 'danger')
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
-            if not user:
-                flash('Username does not exist. Please create an account.', 'warning')
-                return redirect(url_for('signup'))
+            flash('Username does not exist. Please create an account.', 'warning')
+            return redirect(url_for('signup'))
     return render_template('login.html', form=form)
 
 @app.route("/logout")
@@ -157,7 +165,7 @@ def delete_post(id):
 
 @app.route('/reaction', methods=['POST'])
 @login_required
-def vote():
+def reaction():
     data = json.loads(request.data)
     post_id = int(data.get('post_id'))
     post = Post.query.get(post_id)
@@ -177,5 +185,6 @@ def vote():
 
     likes_count = Reaction.query.filter_by(post_id=post_id, reaction_type='like').count()
     dislikes_count = Reaction.query.filter_by(post_id=post_id, reaction_type='dislike').count()
+    like_users = [reaction.user.username for reaction in Reaction.query.filter_by(post_id=post_id, reaction_type='like').all()]
 
-    return jsonify({'status': 'OK', 'likes': likes_count, 'dislikes': dislikes_count})
+    return jsonify({'status': 'OK', 'likes': likes_count, 'dislikes': dislikes_count, 'like_users': like_users})

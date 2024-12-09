@@ -10,10 +10,10 @@ $(document).ready(function() {
         }
     });
 
-    $(".vote").on("click", function() {
+    $(".reaction").on("click", function() {
         var button = $(this);
-        var post_id = button.attr('id');
-        var reaction_type = button.children("i").attr('id');
+        var post_id = button.data('post-id');
+        var reaction_type = button.data('reaction-type');
 
         $.ajax({
             url: '/reaction',
@@ -23,15 +23,17 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response) {
                 if (response.status === 'OK') {
-                    if (reaction_type === "like") {
-                        button.find("#sup").text(" " + response.likes);
-                    } else {
-                        button.find("#sdown").text(" " + response.dislikes);
-                    }
+                    button.closest('.post').find("#sup").text(" " + response.likes);
+                    button.closest('.post').find("#sdown").text(" " + response.dislikes);
+                    button.closest('.post').find(".like-users").html(response.like_users.join(', '));
                 }
             },
             error: function(error) {
-                console.log(error);
+                if (error.status === 401) {
+                    window.location.href = '/login';
+                } else {
+                    console.log(error);
+                }
             }
         });
     });

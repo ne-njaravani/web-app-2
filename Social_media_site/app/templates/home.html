@@ -5,34 +5,38 @@
 <body class="bg-light">
     <div class="container">
         <div class="py-5 text-center">
-            <h2>Welcome to the Social Media App</h2>
-        </div>
-        
-        <div class="row">
-            <div class="col">
-                {% if posts %}
-					{% for post in posts %}
-						<div class="alert alert-info post" role="alert">
-							<h5>{{ post.user.username }}</h5>
-							{{ post.content }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<p><small>{{ post.timestamp }}</small></p>
-							<a class="vote" id="{{ post.id }}">
-								<i class="far fa-thumbs-up" id="like"></i><span id="sup"> {{ post.reactions|selectattr('reaction_type', 'equalto', 'like')|list|length }}</span></a>
-							<a class="vote" id="{{ post.id }}">
-								<i class="far fa-thumbs-down" id="dislike"></i><span id="sdown"> {{ post.reactions|selectattr('reaction_type', 'equalto', 'dislike')|list|length }}</span></a>
-							<br />
-						</div>
-					{% endfor %}
-                {% else %}
-                    <div class="alert alert-warning" role="alert">
-                        No posts available. Be the first to create a post!
-                    </div>
-                {% endif %}
-            </div>
+            <h2 class="no-wrap">Welcome to Yap App!</h2>
+			<br>
+			<h6 class="">The number one social media site for all your brain dumps! 😎</h4>
         </div>
         <div class="row">
             <div class="col text-center">
                 <a href="{{ url_for('create_post') }}" class="btn btn-primary">Create a Post</a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col">
+                {% if posts %}
+                <meta name="csrf-token" content="{{ csrf_token() }}">
+                {% for post in posts %}
+                <div class="alert alert-info post" role="alert">
+                    <h5>{{ post.user.username }}</h5>
+                    {{ post.content }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <p><small>{{ post.timestamp }}</small></p>
+                    <a class="reaction" data-post-id="{{ post.id }}" data-reaction-type="like">
+                        <i class="far fa-thumbs-up"></i><span id="sup"> {{ post.reactions|selectattr('reaction_type', 'equalto', 'like')|list|length }}</span></a>
+                    <a class="reaction" data-post-id="{{ post.id }}" data-reaction-type="dislike">
+                        <i class="far fa-thumbs-down"></i><span id="sdown"> {{ post.reactions|selectattr('reaction_type', 'equalto', 'dislike')|list|length }}</span></a>
+                    <br>
+                    <small>Liked by: <span class="like-users">{{ post.reactions|selectattr('reaction_type', 'equalto', 'like')|map(attribute='user.username')|join(', ') }}</span></small>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="alert alert-warning" role="alert">
+                    No posts available. Be the first to create a post!
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
