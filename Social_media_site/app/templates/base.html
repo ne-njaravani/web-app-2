@@ -2,12 +2,17 @@
 <html lang="en">
 
 <head>
+  <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-    integrity="sha384-GJzQTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.1.1/cookieconsent.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha384-SZXxX4whJ79/Gfr7oCK+w3IyKp3Jaz66eTwRdEIKgrG96AG4nLG/ZTnx4JkBGT1T" crossorigin="anonymous">
@@ -19,27 +24,27 @@
 <body>
   <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="/">Social Media App</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item {% if request.path == '/' %}active{% endif %}">
-                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item {% if request.path == '/account' %}active{% endif %}">
                 <a class="nav-link" href="/account">Account</a>
             </li>
             {% if current_user.is_authenticated %}
-            <li class="nav-item">
+            <li class="nav-item {% if request.path == '/logout' %}active{% endif %}">
                 <a class="nav-link" href="/logout">Logout</a>
             </li>
             {% else %}
-            <li class="nav-item">
+            <li class="nav-item {% if request.path == '/login' %}active{% endif %}">
                 <a class="nav-link" href="/login">Login</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {% if request.path == '/signup' %}active{% endif %}">
                 <a class="nav-link" href="/signup">Sign Up</a>
             </li>
             {% endif %}
@@ -47,9 +52,10 @@
     </div>
   </nav>
   <br>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
-      <div class="col">
+      <div class="col-4"></div>
+      <div class="col-3">
         {% with messages = get_flashed_messages(with_categories=True) %}
           {% if messages %}
             {% for category, message in messages %}
@@ -72,8 +78,11 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
     integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
     crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/js/all.min.js" 
+    integrity="sha512-1JkMy1LR9bTo3psH+H4SV5bO2dFylgOy+UJhMus1zF4VEFuZVu5lsi4I6iIndE4N9p01z1554ZDcvMSjMaqCBQ==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent/3.1.1/cookieconsent.min.js"></script>
-  <script src="{{ url_for('static', filename='like.js') }}"></script>
+  <script src="{{ url_for('static', filename='reaction.js') }}"></script>
   <script src="{{ url_for('static', filename='cookies.js') }}"></script>
   <footer class="footer">
     <div class="container">
@@ -81,5 +90,4 @@
     </div>
   </footer>
 </body>
-
 </html>

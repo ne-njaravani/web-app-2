@@ -12,14 +12,22 @@ class LoginForm(FlaskForm):
 # Account form for changing login details
 class AccountForm(FlaskForm):
     username = StringField('New Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('New Email', validators=[DataRequired(), Email()])
     password = PasswordField('New Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user:
-            raise ValidationError('That username is taken. Please choose a different one.')
+        if username.data != current_user.username:
+            user = User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('That username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        if email.data != current_user.email:
+            user = User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('That email is already in use. Please choose a different one.')
 
 # Post form
 class PostForm(FlaskForm):
@@ -42,4 +50,4 @@ class SignupForm(FlaskForm):
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
-            raise ValidationError('That email is already in use. Please choose a different one.')
+            raise ValidationError('An account already exists with that email. Please log in.')

@@ -1,9 +1,8 @@
 $(document).ready(function() {
-
     // Set the CSRF token so that we are not rejected by server
     var csrf_token = $('meta[name=csrf-token]').attr('content');
-    // Configure ajaxSetupso that the CSRF token is added to the header of every request
-  $.ajaxSetup({
+    // Configure ajaxSetup so that the CSRF token is added to the header of every request
+    $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrf_token);
@@ -11,30 +10,24 @@ $(document).ready(function() {
         }
     });
 
-    $(".like-button").on("click", function() {
+    $(".vote").on("click", function() {
         var button = $(this);
-
-        // Which idea was clicked? Fetch the idea ID
         var post_id = button.attr('id');
-        // Is it an upvote or downvote?
-        var reaction_type = button.children()[0].id;
+        var reaction_type = button.children("i").attr('id');
 
         $.ajax({
             url: '/reaction',
             type: 'POST',
-            data: JSON.stringify({ post_id: post_id, reaction_type: reaction_type}),
-      // We are using JSON, not XML
+            data: JSON.stringify({ post_id: post_id, reaction_type: reaction_type }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: function(response){
-                console.log(response);
-
-                // Update the html rendered to reflect new count
-                // Check which count to update
-                if(vote_type == "like") {
-                    clicked_obj.children()[1].innerHTML = " " + response.like;
-                } else {
-                    clicked_obj.children()[1].innerHTML = " " + response.dislike;
+            success: function(response) {
+                if (response.status === 'OK') {
+                    if (reaction_type === "like") {
+                        button.find("#sup").text(" " + response.likes);
+                    } else {
+                        button.find("#sdown").text(" " + response.dislikes);
+                    }
                 }
             },
             error: function(error) {

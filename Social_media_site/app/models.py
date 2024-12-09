@@ -15,9 +15,10 @@ class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, nullable=False)
+    email = Column(String(120), unique=True, nullable=False)
     password = Column(String(128))
-    posts = relationship('Post', secondary=posts_users, back_populates='users')
-    likes = relationship('Like', back_populates='user')
+    posts = relationship('Post', back_populates='user')
+    reactions = relationship('Reaction', back_populates='user')
 
     def set_password(self, password):
         self.password = password
@@ -32,19 +33,21 @@ class Post(db.Model):
     __tablename__ = 'post'
     id = Column(Integer, primary_key=True)
     content = Column(String(500), nullable=False)
-    users = relationship('User', secondary=posts_users, back_populates='posts')
-    likes = relationship('Like', back_populates='post')
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user = relationship('User', back_populates='posts')
+    reactions = relationship('Reaction', back_populates='post')
 
     def __repr__(self):
         return f'<Post {self.id}>'
 
-class Like(db.Model):
-    __tablename__ = 'like'
+class Reaction(db.Model):
+    __tablename__ = 'reaction'
     id = Column(Integer, primary_key=True)
-    post_id = Column(Integer, ForeignKey('post.id'))
-    user_id = Column(Integer, ForeignKey('user.id'))
-    post = relationship('Post', back_populates='likes')
-    user = relationship('User', back_populates='likes')
+    post_id = Column(Integer, ForeignKey('post.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    reaction_type = Column(String(10), nullable=False)  # 'like' or 'dislike'
+    post = relationship('Post', back_populates='reactions')
+    user = relationship('User', back_populates='reactions')
 
     def __repr__(self):
-        return f'<Like {self.id}>'
+        return f'<Reaction {self.reaction_type} by User {self.user_id} on Post {self.post_id}>'

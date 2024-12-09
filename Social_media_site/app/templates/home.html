@@ -3,52 +3,38 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <body class="bg-light">
-
-	<div class="container">
-		<div class="py-5 text-center">
-			<h2>Welcome to the Social Media App</h2>
-			<!-- text-center -->
-		</div>
-		<div class="row">
-			<div class="col">
-				<div class="mb-3">
-	            	{% with messages = get_flashed_messages() %}
-						{% if messages %}
-							{% for message in messages %}
-								<div class="alert alert-success">{{ message }}</div>
-							{% endfor %}
-						{% endif %}
-					{% endwith %}
-
-					  <form  action="" method="post" role="form" name="post">
-					  	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-						{{ form.csrf }}
-						<div class="form-group">
-							<input type="text" class="form-control" id="post" name="post" placeholder="We should learn about blue elephants.">
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>Welcome to the Social Media App</h2>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                {% if posts %}
+					{% for post in posts %}
+						<div class="alert alert-info post" role="alert">
+							<h5>{{ post.user.username }}</h5>
+							{{ post.content }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<p><small>{{ post.timestamp }}</small></p>
+							<a class="vote" id="{{ post.id }}">
+								<i class="far fa-thumbs-up" id="like"></i><span id="sup"> {{ post.reactions|selectattr('reaction_type', 'equalto', 'like')|list|length }}</span></a>
+							<a class="vote" id="{{ post.id }}">
+								<i class="far fa-thumbs-down" id="dislike"></i><span id="sdown"> {{ post.reactions|selectattr('reaction_type', 'equalto', 'dislike')|list|length }}</span></a>
+							<br />
 						</div>
-						<button type="submit" class="btn btn-success">Submit your post</button>
-					</form>
-	       </div>
-	      </div>
-
-	        <br /><br />
-	        <h4>You could also vote for other people's posts. Or your own.</h4><i>
-			<meta name="csrf-token" content="{{ csrf_token() }}">
-			{% for post in posts %}
-			<div class="alert alert-info post" role="alert">
-				{{ post.text }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a class="vote" id="{{ post.id }}">
-					<i class="far fa-thumbs-up" id="up"></i><span id="sup"> {{ post.like }}</span></a>
-				<a class="vote" id="{{ post.id }}">
-					<i class="far fa-thumbs-down" id="down"></i><span id="sdown"> {{ post.dislike }}</span></a>
-				<br />
-				<!-- alert div -->
-			</div>
-			{% endfor %}
-
-	        <!-- row -->
-		</div>
-		<!-- container -->
-	</div>
+					{% endfor %}
+                {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        No posts available. Be the first to create a post!
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <a href="{{ url_for('create_post') }}" class="btn btn-primary">Create a Post</a>
+            </div>
+        </div>
+    </div>
 </body>
 {% endblock %}
