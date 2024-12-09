@@ -168,8 +168,8 @@ def delete_post(id):
 def reaction():
     data = json.loads(request.data)
     post_id = int(data.get('post_id'))
-    post = Post.query.get(post_id)
     reaction_type = data.get('reaction_type')
+    post = Post.query.get_or_404(post_id)
 
     reaction = Reaction.query.filter_by(post_id=post_id, user_id=current_user.id).first()
     if reaction:
@@ -185,11 +185,9 @@ def reaction():
 
     likes_count = Reaction.query.filter_by(post_id=post_id, reaction_type='like').count()
     dislikes_count = Reaction.query.filter_by(post_id=post_id, reaction_type='dislike').count()
-    like_users = [reaction.user.username for reaction in Reaction.query.filter_by(post_id=post_id, reaction_type='like').all()]
 
     return jsonify({
         'status': 'OK',
         'likes': likes_count,
-        'dislikes': dislikes_count,
-        'like_users': like_users
+        'dislikes': dislikes_count
     })
