@@ -1,48 +1,310 @@
-/* Navbar styling */
-.navbar {
-    background-color: #343a40;
+/* Modern styling for Yap App */
+:root {
+    --primary-color: #1da1f2;
+    --secondary-color: #14171a;
+    --hover-color: #1a8cd8;
+    --background-color: #f5f8fa;
+    --card-background: #ffffff;
+    --text-color: #14171a;
+    --light-text: #657786;
+    --border-color: #e1e8ed;
 }
 
-.navbar-brand, .nav-link {
-    color: #ffffff !important;
+body {
+    background-color: var(--background-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-color);
+}
+
+/* Navbar styling */
+.navbar {
+    background-color: var(--card-background) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand {
+    color: var(--primary-color) !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    color: var(--text-color) !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .nav-link:hover, .nav-link:focus {
-    background-color: #495057;
-    color: #ffffff !important;
-    outline: 2px solid #ffffff;
-    outline-offset: 2px;
+    background-color: var(--background-color);
+    color: var(--primary-color) !important;
+    outline: none;
 }
 
 /* Dropdown menu styling */
 .dropdown-menu {
-    background-color: #343a40;
-    color: #ffffff;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dropdown-item {
-    color: #ffffff;
+    color: var(--text-color);
+    transition: background-color 0.2s ease;
 }
 
 .dropdown-item:hover, .dropdown-item:focus {
-    background-color: #495057;
-    color: #ffffff;
-    outline: 2px solid #ffffff;
-    outline-offset: 2px;
+    background-color: var(--background-color);
+    color: var(--primary-color);
 }
 
-/* Add hover effect to buttons */
+/* Button styling */
 .btn {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    font-weight: 600;
 }
 
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
 
-/* Change Width for Input Fields */
+.btn-primary:hover {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
+}
 
-.text
+.btn-link {
+    color: var(--light-text);
+    text-decoration: none;
+}
 
--input {
-    max-width: 300px;
+.btn-link:hover {
+    color: var(--primary-color);
+}
+
+/* Post card styling */
+.post-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.post-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    margin-right: 12px;
+}
+
+.post-author {
+    font-weight: bold;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.post-author:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.post-time {
+    color: var(--light-text);
+    font-size: 0.9rem;
+    margin-left: 5px;
+}
+
+.post-content {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    word-wrap: break-word;
+}
+
+.post-actions {
+    display: flex;
+    gap: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+}
+
+.reaction-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--light-text);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.reaction-btn:hover {
+    background-color: rgba(29, 161, 242, 0.1);
+    color: var(--primary-color);
+}
+
+.reaction-btn i {
+    font-size: 1.1rem;
+}
+
+/* Comment section */
+.comment-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.comment {
+    background-color: var(--background-color);
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-right: 8px;
+}
+
+.comment-content {
+    color: var(--text-color);
+    margin-top: 5px;
+}
+
+.comment-time {
+    color: var(--light-text);
+    font-size: 0.85rem;
+}
+
+/* Form styling */
+.form-control {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(29, 161, 242, 0.25);
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Header/Hero section */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #0c7abf 100%);
+    color: white;
+    padding: 40px 0;
+    margin-bottom: 30px;
+    border-radius: 0 0 20px 20px;
+}
+
+.hero-section h2 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Search bar */
+.search-box {
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(29, 161, 242, 0.15);
+}
+
+/* User profile badge */
+.user-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--background-color);
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: background-color 0.2s ease;
+}
+
+.user-badge:hover {
+    background-color: var(--border-color);
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+.user-avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Alert styling */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.alert-info {
+    background-color: #e7f5ff;
+    color: #0c5460;
+}
+
+.alert-danger {
+    background-color: #ffe0e0;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff4e0;
+    color: #856404;
+}
+
+.alert-success {
+    background-color: #d4f4dd;
+    color: #155724;
 }
 
 /* Ensure text stays on one line */
@@ -50,24 +312,44 @@
     white-space: nowrap;
 }
 
-/* Alert styling */
-
-.alert-info {
-    background-color: #d1ecf1;
-    color: #0c5460;
+/* Stats display */
+.stat-item {
+    display: inline-block;
+    margin-right: 20px;
+    color: var(--light-text);
 }
 
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
+.stat-number {
+    font-weight: bold;
+    color: var(--text-color);
 }
 
-.alert-warning {
-    background-color: #fff3cd;
-    color: #856404;
+/* Follow button */
+.follow-btn {
+    border-radius: 20px;
+    padding: 8px 20px;
+    font-weight: 600;
 }
 
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
+/* Character counter */
+.char-counter {
+    text-align: right;
+    color: var(--light-text);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.char-counter.warning {
+    color: #ff6b6b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .post-card {
+        padding: 15px;
+    }
+    
+    .hero-section {
+        padding: 30px 15px;
+    }
 }

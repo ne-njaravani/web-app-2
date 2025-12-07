@@ -1,47 +1,55 @@
 {% extends "base.html" %}
-{% block title %}My Profile{% endblock %}
+{% block title %}{{ user.username }} - Profile{% endblock %}
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
-            {% if current_user.is_authenticated %}
             <div class="post-card">
                 <div class="d-flex align-items-start">
                     <div class="post-avatar" style="width: 80px; height: 80px; font-size: 36px;">
-                        {{ current_user.username[0].upper() }}
+                        {{ user.username[0].upper() }}
                     </div>
                     <div class="ms-3 flex-grow-1">
-                        <h3 class="mb-1">{{ current_user.username }}</h3>
-                        <p class="text-muted">{{ current_user.email }}</p>
-                        {% if current_user.bio %}
-                        <p class="mt-2">{{ current_user.bio }}</p>
+                        <h3 class="mb-1">{{ user.username }}</h3>
+                        <p class="text-muted">{{ user.email }}</p>
+                        {% if user.bio %}
+                        <p class="mt-2">{{ user.bio }}</p>
                         {% endif %}
                         
                         <div class="mt-3">
                             <span class="stat-item">
-                                <span class="stat-number">{{ posts|length }}</span> Posts
+                                <span class="stat-number">{{ user.posts|length }}</span> Posts
                             </span>
                             <span class="stat-item">
-                                <span class="stat-number">{{ current_user.followers.count() }}</span> Followers
+                                <span class="stat-number">{{ user.followers.count() }}</span> Followers
                             </span>
                             <span class="stat-item">
-                                <span class="stat-number">{{ current_user.followed.count() }}</span> Following
+                                <span class="stat-number">{{ user.followed.count() }}</span> Following
                             </span>
                         </div>
 
+                        {% if current_user.is_authenticated and current_user.id != user.id %}
                         <div class="mt-3">
-                            <a href="{{ url_for('account_edit') }}" class="btn btn-outline-primary">
-                                <i class="fas fa-edit"></i> Edit Profile
-                            </a>
-                            <a href="{{ url_for('create_post') }}" class="btn btn-primary">
-                                <i class="fas fa-plus-circle"></i> Create Post
-                            </a>
+                            {% if current_user.is_following(user) %}
+                            <form method="POST" action="{{ url_for('unfollow', username=user.username) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-outline-primary follow-btn">
+                                    <i class="fas fa-user-minus"></i> Unfollow
+                                </button>
+                            </form>
+                            {% else %}
+                            <form method="POST" action="{{ url_for('follow', username=user.username) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-primary follow-btn">
+                                    <i class="fas fa-user-plus"></i> Follow
+                                </button>
+                            </form>
+                            {% endif %}
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
 
-            <h4 class="mt-4 mb-3">My Posts</h4>
+            <h4 class="mt-4 mb-3">Posts by {{ user.username }}</h4>
             
             {% if posts %}
             {% for post in posts %}
@@ -52,6 +60,7 @@
                             <span class="post-author">{{ post.user.username }}</span>
                             <span class="post-time">· {{ post.timestamp.strftime('%b %d, %Y') }}</span>
                         </div>
+                        {% if current_user.is_authenticated and current_user.id == post.user_id %}
                         <div class="ms-auto">
                             <a href="{{ url_for('edit_post', id=post.id) }}" class="btn btn-sm btn-link">
                                 <i class="fas fa-edit"></i>
@@ -62,6 +71,7 @@
                                 </button>
                             </form>
                         </div>
+                        {% endif %}
                     </div>
                     
                     <div class="post-content">
@@ -69,6 +79,7 @@
                     </div>
                     
                     <div class="post-actions">
+                        {% if current_user.is_authenticated %}
                         <button class="reaction btn btn-link" data-post-id="{{ post.id }}" data-reaction-type="like">
                             <i class="far fa-thumbs-up"></i>
                             <span class="like-count">{{ post.reactions|selectattr('reaction_type', 'equalto', 'like')|list|length }}</span>
@@ -77,6 +88,14 @@
                             <i class="far fa-thumbs-down"></i>
                             <span class="dislike-count">{{ post.reactions|selectattr('reaction_type', 'equalto', 'dislike')|list|length }}</span>
                         </button>
+                        {% else %}
+                        <span class="text-muted">
+                            <i class="far fa-thumbs-up"></i> {{ post.reactions|selectattr('reaction_type', 'equalto', 'like')|list|length }}
+                        </span>
+                        <span class="text-muted">
+                            <i class="far fa-thumbs-down"></i> {{ post.reactions|selectattr('reaction_type', 'equalto', 'dislike')|list|length }}
+                        </span>
+                        {% endif %}
                         <span class="btn btn-link">
                             <i class="far fa-comment"></i> {{ post.comments|length }}
                         </span>
@@ -90,7 +109,7 @@
                             <span class="comment-author">{{ comment.user.username }}</span>
                             <span class="comment-time">· {{ comment.timestamp.strftime('%b %d') }}</span>
                             <div class="comment-content">{{ comment.content }}</div>
-                            {% if current_user.id == comment.user_id %}
+                            {% if current_user.is_authenticated and current_user.id == comment.user_id %}
                             <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" style="display:inline;">
                                 <button type="submit" class="btn btn-sm btn-link text-danger" onclick="return confirm('Delete this comment?')">
                                     <i class="fas fa-trash-alt"></i> Delete
@@ -102,6 +121,7 @@
                     </div>
                     {% endif %}
 
+                    {% if current_user.is_authenticated %}
                     <div class="comment-section">
                         <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -113,18 +133,14 @@
                             </div>
                         </form>
                     </div>
+                    {% endif %}
                 </div>
             {% endfor %}
             {% else %}
             <div class="post-card text-center">
                 <i class="fas fa-inbox fa-3x mb-3" style="color: #cbd5e0;"></i>
-                <p class="text-muted">You haven't created any posts yet.</p>
-                <a href="{{ url_for('create_post') }}" class="btn btn-primary">Create Your First Post</a>
+                <p class="text-muted">No posts yet.</p>
             </div>
-            {% endif %}
-            
-            {% else %}
-            <p>Please <a href="{{ url_for('login') }}">log in</a> to view your profile.</p>
             {% endif %}
         </div>
     </div>
