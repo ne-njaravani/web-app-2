@@ -31,7 +31,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 babel = Babel(app, locale_selector=get_locale)
-admin = Admin(app, template_mode='bootstrap4')
+admin = Admin(app)
 
 from flask_admin.contrib.sqla import ModelView
 from .models import User, Post, Reaction
