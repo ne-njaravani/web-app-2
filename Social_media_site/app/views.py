@@ -258,9 +258,10 @@ def unfollow(username):
 def search():
     query = request.args.get('q', '')
     if query:
-        # Search in posts and usernames
-        posts = Post.query.filter(Post.content.contains(query)).order_by(Post.timestamp.desc()).all()
-        users = User.query.filter(User.username.contains(query)).all()
+        # Search in posts and usernames (case-insensitive)
+        search_term = f'%{query}%'
+        posts = Post.query.filter(Post.content.ilike(search_term)).order_by(Post.timestamp.desc()).all()
+        users = User.query.filter(User.username.ilike(search_term)).all()
     else:
         posts = []
         users = []
