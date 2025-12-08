@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import TextAreaField, StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from .models import User
+from flask_login import current_user
 
 # Login form
 class LoginForm(FlaskForm):
@@ -51,3 +52,8 @@ class SignupForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('An account already exists with that email. Please log in.')
+
+# Comment form
+class CommentForm(FlaskForm):
+    comment = TextAreaField('Comment', validators=[DataRequired(), Length(max=300)])
+    submit = SubmitField('Post Comment')

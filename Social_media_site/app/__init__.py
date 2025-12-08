@@ -31,13 +31,14 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 babel = Babel(app, locale_selector=get_locale)
-admin = Admin(app, template_mode='bootstrap4')
+admin = Admin(app)
 
 from flask_admin.contrib.sqla import ModelView
-from .models import User, Post, Reaction
+from .models import User, Post, Reaction, Comment
 
 admin.add_view(ModelView(User, db.session, name='Admin Users', endpoint='admin_users'))
 admin.add_view(ModelView(Post, db.session, name='Admin Posts', endpoint='admin_posts'))
 admin.add_view(ModelView(Reaction, db.session, name='Admin Likes', endpoint='admin_likes'))
+admin.add_view(ModelView(Comment, db.session, name='Admin Comments', endpoint='admin_comments'))
 
 from app import views, models

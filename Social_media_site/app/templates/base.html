@@ -27,42 +27,73 @@
 
 <body>
   <!-- Navbar with different properties when a user is logged and when they are not -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-    <a class="navbar-brand text-white" href="{{ url_for('home') }}">YAP APP!</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link text-white" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
-          </li>
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('home') }}">
+        <i class="fas fa-comment-dots"></i>
+        <span>YAP APP</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+          <!-- Search bar in center -->
+          <form class="mx-auto d-flex" action="{{ url_for('search') }}" method="GET" style="max-width: 450px; width: 100%;">
+              <input class="search-box" type="search" name="q" placeholder="🔍 Search posts and users..." aria-label="Search">
+          </form>
           
-            {% if current_user.is_authenticated %}
+          <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-                <a class="nav-link text-white" href="{{ url_for('create_post') }}">Create</a>
+              <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+              </a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white" href="#" id="accountDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Account
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
-                    <a class="dropdown-item" href="{{ url_for('account') }}">Profile</a>
-                    <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
-                </div>
-            </li>
-            {% else %}
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white" href="#" id="accountDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Account
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
-                    <a class="dropdown-item" href="{{ url_for('login') }}">Login</a>
-                    <a class="dropdown-item" href="{{ url_for('signup') }}">Signup</a>
-                </div>
-            </li>
-            {% endif %}
-        </ul>
+            
+              {% if current_user.is_authenticated %}
+              <li class="nav-item">
+                  <a class="nav-link {% if request.endpoint == 'create_post' %}active{% endif %}" href="{{ url_for('create_post') }}">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Create</span>
+                  </a>
+              </li>
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle {% if request.endpoint in ['account', 'account_edit'] %}active{% endif %}" href="#" id="accountDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-user-circle"></i>
+                      <span>{{ current_user.username }}</span>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
+                      <a class="dropdown-item" href="{{ url_for('account') }}">
+                        <i class="fas fa-user"></i>
+                        <span>My Profile</span>
+                      </a>
+                      <a class="dropdown-item" href="{{ url_for('account_edit') }}">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                      </a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                      </a>
+                  </div>
+              </li>
+              {% else %}
+              <li class="nav-item">
+                  <a class="nav-link {% if request.endpoint == 'login' %}active{% endif %}" href="{{ url_for('login') }}">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link {% if request.endpoint == 'signup' %}active{% endif %}" href="{{ url_for('signup') }}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Sign Up</span>
+                  </a>
+              </li>
+              {% endif %}
+          </ul>
+      </div>
     </div>
 </nav>
   <br>

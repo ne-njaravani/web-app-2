@@ -2,13 +2,14 @@ from flask import Flask, render_template, redirect, url_for, flash, request, mak
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, login_required, login_user, logout_user
 from app import app, db, models, admin
-from .forms import AccountForm, PostForm, LoginForm, SignupForm
-from .models import User, Post, Reaction
+from .forms import AccountForm, PostForm, LoginForm, SignupForm, CommentForm
+from .models import User, Post, Reaction, Comment
 import json
 
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Post, db.session))
 admin.add_view(ModelView(Reaction, db.session))
+admin.add_view(ModelView(Comment, db.session))
 
 @app.route('/')
 def home():
@@ -20,7 +21,8 @@ def home():
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
 
-    posts = models.Post.query.all()
+    # Get posts sorted by timestamp (newest first)
+    posts = models.Post.query.order_by(models.Post.timestamp.desc()).all()
     return render_template('home.html', posts=posts, form=form)
 
 @app.route('/set_cookie')
@@ -191,3 +193,76 @@ def reaction():
         'likes': likes_count,
         'dislikes': dislikes_count
     })
+
+@app.route('/comment/<int:post_id>', methods=['POST'])
+@login_required
+def add_comment(post_id):
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(content=form.comment.data, post_id=post_id, user_id=current_user.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment added!', 'success')
+    return redirect(request.referrer or url_for('home'))
+
+@app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    if comment.user_id != current_user.id:
+        flash('You do not have permission to delete this comment.', 'danger')
+        return redirect(request.referrer or url_for('home'))
+    
+    db.session.delete(comment)
+    db.session.commit()
+    flash('Comment deleted!', 'success')
+    return redirect(request.referrer or url_for('home'))
+
+@app.route('/user/<username>')
+def user_profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(user_id=user.id).order_by(Post.timestamp.desc()).all()
+    return render_template('user_profile.html', user=user, posts=posts)
+
+@app.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User not found.', 'warning')
+        return redirect(url_for('home'))
+    if user == current_user:
+        flash('You cannot follow yourself!', 'warning')
+        return redirect(url_for('user_profile', username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash(f'You are now following {username}!', 'success')
+    return redirect(url_for('user_profile', username=username))
+
+@app.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User not found.', 'warning')
+        return redirect(url_for('home'))
+    if user == current_user:
+        flash('You cannot unfollow yourself!', 'warning')
+        return redirect(url_for('user_profile', username=username))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash(f'You have unfollowed {username}.', 'info')
+    return redirect(url_for('user_profile', username=username))
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '')
+    if query:
+        # Search in posts and usernames (case-insensitive)
+        search_term = f'%{query}%'
+        posts = Post.query.filter(Post.content.ilike(search_term)).order_by(Post.timestamp.desc()).all()
+        users = User.query.filter(User.username.ilike(search_term)).all()
+    else:
+        posts = []
+        users = []
+    return render_template('search.html', posts=posts, users=users, query=query)

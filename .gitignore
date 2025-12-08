@@ -1,3 +1,20 @@
 # Ignore database files
+*.db
 app.db
 /workspaces/web-app-2/Social_media_site/app.db
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Migrations
+**/migrations/__pycache__/
+**/migrations/versions/__pycache__/
